@@ -13,11 +13,22 @@ public class XlsGenerator {
 
 	public XlsGenerator(String path, String[] columnsData, HashMap<String, Double[]> dataMap) {
 		try {
+
+			int line = 1;
+			int column = 1;
+			int margin = 2;
+
 			Workbook wb = new XSSFWorkbook();
 			Sheet sheet =  wb.createSheet("new sheet");
 
 			Drawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
+			//position of the graphs
+			int top = column;
+			int left = dataMap.size() + line + 1 + margin;
+			int bottom = column + columnsData.length + 1;
+			int right = dataMap.size() + line + 1 + margin + 10 ;
+
+			ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, top, left, bottom, right);
 
 			Chart chart = drawing.createChart(anchor);
 			ChartLegend legend = chart.getOrCreateLegend();
@@ -28,9 +39,6 @@ public class XlsGenerator {
 			ChartAxis bottomAxis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
 			ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
 			leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-
-			int line = 1;
-			int column = 1;
 
 			// Generate title
 			insertCellLine(sheet, line, column, "", columnsData);
@@ -48,7 +56,6 @@ public class XlsGenerator {
 				chartSerie.setTitle(key);
 				line++;
 			}
-
 
 			chart.plot(data, bottomAxis, leftAxis);
 
